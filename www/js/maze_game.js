@@ -41,7 +41,10 @@ const MAZE = 1;
 const SKELETON = 2;
 const WIN_MESSAGE = 3;
 const PLATFORM_START = 4;
-const PLATFORM_END = 9;
+const PLATFORM_END = 15;
+
+var MOVE_SCREEN = false;
+
 /******************* END OF Declare game specific data and functions *****************/
 
 
@@ -63,14 +66,13 @@ function playGame()
     /* This is game specific code. It will be different for each game, as each game will have it own gameObjects */
 
     gameObjects[BACKGROUND] = new StaticImage(background, 0, 0, canvas.width, canvas.height);
-    gameObjects[MAZE] = new StaticImage(mazeGrid, 0, 0, canvas.width, canvas.height);
     gameObjects[SKELETON] = new MazeSkeleton(skeletonImage, canvas.width/2, canvas.height + 5);
     
     var heightPlacement = canvas.height;
 
     for(var i = PLATFORM_START; i <= PLATFORM_END; i++){
         let widthPlacement = getRandomInt(0,canvas.width-100);
-        gameObjects[i] = new Platform(platform,i, widthPlacement , heightPlacement - 100, 100, 20, 50, false);
+        gameObjects[i] = new Platform(platform,i, widthPlacement , heightPlacement - 100, 100, 20, 20, false);
         heightPlacement -= 100;
     }
     

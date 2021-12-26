@@ -27,10 +27,9 @@ class MazeSkeletonCanvasGame extends CanvasGame
         {        
             for(var i = PLATFORM_START; i <= PLATFORM_END; i++){
                 if(gameObjects[i].playerIsInsidePlatform(gameObjects[SKELETON].getCentreX(), gameObjects[SKELETON].getCentreY())){
-                   // console.log("FLY")
+                 
                 } else {
                   
-                   // console.log("RUN")
                 }
             }
         }
@@ -38,10 +37,10 @@ class MazeSkeletonCanvasGame extends CanvasGame
         {
             for(var i = PLATFORM_START; i <= PLATFORM_END; i++){
                 if(gameObjects[i].playerIsInsidePlatform(gameObjects[SKELETON].getCentreX(), gameObjects[SKELETON].getCentreY())){
-                  //  console.log("FLY")
+                  
                 } else {
                    
-                  //  console.log("RUN")
+                   
                 }
             }
         }
@@ -49,11 +48,9 @@ class MazeSkeletonCanvasGame extends CanvasGame
         {
             for(var i = PLATFORM_START; i <= PLATFORM_END; i++){
                 if(gameObjects[i].playerIsInsidePlatform(gameObjects[SKELETON].getCentreX(), gameObjects[SKELETON].getCentreY())){
-                  this.stay = true;
+                  
                 } else {
-                    if(!this.stay) {
-                        gameObjects[i].fallOffPlatform()
-                    }
+                    gameObjects[i].fallOffPlatform()
                 }
             }
         }
@@ -61,12 +58,9 @@ class MazeSkeletonCanvasGame extends CanvasGame
         {
             for(var i = PLATFORM_START; i <= PLATFORM_END; i++){
                 if(gameObjects[i].playerIsInsidePlatform(gameObjects[SKELETON].getCentreX(), gameObjects[SKELETON].getCentreY())){
-                    this.stay = true;
+                 
                 } else {
-                    if(!this.stay) {
-                        gameObjects[i].fallOffPlatform()
-                    }
-                   
+                    gameObjects[i].fallOffPlatform()
                 }
             }
         }

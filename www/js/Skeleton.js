@@ -28,13 +28,19 @@ class Skeleton extends GameObject
         console.log(this.SPRITE_HEIGHT)
 
         this.colission = false;
-     
+        this.fall = false;
         this.setDirection(STOPPED_LEFT);
+
+        this.FALLING_SPEED = 7;
+        this.HORIZONTAL_SPEED = 5;
     }
 
     updateState()
     {
-
+        if(MOVE_SCREEN){
+            this.centreY += 0.9;
+        }
+  
     let gravity = 1;
     let HORIZONTAL_SPEED = 10;
  
@@ -103,13 +109,60 @@ class Skeleton extends GameObject
             }
             else // stopped
             {
+                console.log("stoped")
                 gravity = 0;
                 this.column = 0;
                 this.row = 4;
                 this.currentgameObject = 0;
             }
+        } else if(this.collision) {
+            // this.centreY += this.SKELETON_SPEED;
+            // if (this.direction === UP_RIGHT)
+            // {
+            //     this.centreX += HORIZONTAL_SPEED;
+            // }
+            // else if (this.direction === UP_LEFT)
+            // {
+            //     this.centreX -= HORIZONTAL_SPEED;
+            // }
+            // else if (this.direction === LEFT)
+            // {
+            //     gravity = 0;
+            //     this.centreX -= this.SKELETON_SPEED;
+            // }
+            // // else if (this.direction === DOWN)
+            // // {
+            // //     this.centreY += this.SKELETON_SPEED;
+            // // }
+            // else if (this.direction === RIGHT)
+            // {
+            //     gravity = 0;
+            //     this.centreX += this.SKELETON_SPEED;
+            // }
+        }
+         if(this.fall) {
+            console.log("falling")
+            this.centreY += this.FALLING_SPEED;
+            if (this.direction === UP_RIGHT)
+            {
+                this.centreX += this.HORIZONTAL_SPEED;
+            }
+            else if (this.direction === UP_LEFT)
+            {
+                this.centreX -= this.HORIZONTAL_SPEED;
+            }
+            else if (this.direction === LEFT)
+            {
+                gravity = 0;
+                this.centreX -= this.SKELETON_SPEED;
+            }
+            else if (this.direction === RIGHT)
+            {
+                gravity = 0;
+                this.centreX += this.SKELETON_SPEED;
+            }
         } else {
-            this.centreY += this.SKELETON_SPEED/4;
+         
         }
     
     }
@@ -165,10 +218,23 @@ class Skeleton extends GameObject
     }
     resetSpeed()
     {
-        this.SKELETON_SPEED = 10; 
+        this.SKELETON_SPEED = 10;
+        this.FALLING_SPEED = 0
+        this.HORIZONTAL_SPEED = 0;
     }
     setCollision(value)
     {
-        this.colission = value;
+        // this.colission = value;
     }
+    fallOff(value){
+        this.fall = value;
+
+        if(this.direction === RIGHT){
+            this.direction = UP_RIGHT
+        }
+        else if(this.direction === LEFT){
+            this.direction = UP_LEFT
+        }
+    }
+   
 }
