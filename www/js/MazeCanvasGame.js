@@ -5,24 +5,142 @@
 
 class MazeSkeletonCanvasGame extends CanvasGame
 {
-    constructor(mazeGridImage)
+    constructor(image)
     {
         super();
 
-        /* this.mazeCtx will be used for collision detection */
+        /* this.bordersCtx will be used for collision detection */
         let mazeOffscreenCanvas = document.createElement('canvas');
-        this.mazeCtx = mazeOffscreenCanvas.getContext('2d');
+        this.bordersCtx = mazeOffscreenCanvas.getContext('2d');
         mazeOffscreenCanvas.width = canvas.width;
         mazeOffscreenCanvas.height = canvas.height;
-        this.mazeCtx.drawImage(mazeGridImage, 0, 0, canvas.width, canvas.height);
+        this.bordersCtx.drawImage(image, 0, 0, canvas.width, canvas.height);
 		console.log("W2:"+canvas.width);
 		console.log("H2:"+canvas.width);
-
         this.stay = false;
+        this.distance = 500;
+        this.update_counter = 0;
     }
 
     collisionDetection()
     {
+      
+        // set try again screen
+        if(TRY_AGAIN)
+        {
+            counterClick = -10;
+        }
+
+     
+        if(counterClick==0)
+        {
+            gameObjects[TRY_AGAIN_TEXT].stopAndHide()
+            gameObjects[LOST_TEXT].stopAndHide()
+            gameObjects[LOST_TEXT_SCORE].stopAndHide()
+            gameObjects[CONFETTI_GIF].stopAndHide()
+        }
+
+      
+        
+        if(NEW_RECORD)
+        {
+            gameObjects[CONFETTI_GIF].start()
+        }
+
+        if(counterClick>0){
+
+            for(var i = PLATFORM_START; i <= PLATFORM_END; i++){
+                gameObjects[i].start()
+            }
+
+            canvas.addEventListener('click', function() {
+                if(gameObjects[SKELETON].getDirection() === LEFT){
+                    gameObjects[SKELETON].setDirection(UP_LEFT);
+                } 
+                else if(gameObjects[SKELETON].getDirection() === RIGHT){
+                    gameObjects[SKELETON].setDirection(UP_RIGHT);
+                }
+                else if(gameObjects[SKELETON].getDirection() === STOPPED_LEFT){
+                    gameObjects[SKELETON].setDirection(UP_LEFT);
+                }
+                else if(gameObjects[SKELETON].getDirection() === STOPPED_RIGHT){
+                    gameObjects[SKELETON].setDirection(UP_RIGHT);
+                }
+             }, false);
+        
+        }
+
+        if(counterClick===-10){
+            canvas.addEventListener('click', function() {
+               console.log("retry")
+               counterClick=0;
+               window.location.reload()
+             }, false);
+        }
+      
+       
+   
+
+        // player has lost
+        if(gameObjects[SKELETON].getCentreY()>canvas.height+10){
+
+            
+            gameObjects[LOST_TEXT].start();
+            gameObjects[LOST_TEXT_SCORE].setHeight(height);
+            gameObjects[LOST_TEXT_SCORE].start();
+            gameObjects[TRY_AGAIN_TEXT].start()
+        
+ 
+            if(height>best_height && this.update_counter<1)
+            {
+                this.update_counter += 1
+                db.collection("users").doc(user_document).set({
+                    best_score: height,
+                }, {merge: true})
+                .then(() => {
+                   
+                    console.log("Document successfully written!");
+                })
+                .catch((error) => {
+                    console.error("Error writing document: ", error);
+                });
+            }
+
+            for (let i = BORDERS; i < gameObjects.length-3; i++) /* stop all gameObjects from animating */
+            {
+                if(gameObjects[i]!=null){
+                    gameObjects[i].stopAndHide();
+                }
+            }
+          
+            TRY_AGAIN = true;
+        
+        }
+
+
+        if (gameObjects[SKELETON].getDirection() === UP_RIGHT)
+        {
+         
+            if (gameObjects[SKELETON].getCentreX() + 50 > canvas.width)
+            {
+                gameObjects[SKELETON].bounceJump(true);
+            }
+        }
+
+
+        if (gameObjects[SKELETON].getDirection() === UP_LEFT)
+        {   
+         
+         
+            if (gameObjects[SKELETON].getCentreX() - 50 < 0)
+            {
+                gameObjects[SKELETON].bounceJump(true);
+            }
+        
+        }
+     
+
+
         if (gameObjects[SKELETON].getDirection() === UP_LEFT)
         {        
             for(var i = PLATFORM_START; i <= PLATFORM_END; i++){

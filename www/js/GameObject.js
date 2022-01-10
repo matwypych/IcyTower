@@ -45,6 +45,7 @@ class GameObject
 
     stop()
     {
+       
         if (this.gameObjectInterval !== null)
         {
             clearInterval(this.gameObjectInterval);

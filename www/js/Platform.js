@@ -16,24 +16,25 @@ class Platform extends GameObject
         this.height = height;
         this.x = x;
         this.y = y;
-        console.log("Platform" , number, "position (x,y): " + this.x + ", " + this.y) 
+        //console.log("Platform" , number, "position (x,y): " + this.x + ", " + this.y) 
         this.centreY = this.getCentreY();   
         this.centreX = this.getCentreX();
-        console.log(this.centreX)  
-        console.log(this.centreY)
+       // console.log(this.centreX)  
+       // console.log(this.centreY)
         this.playerIsOnPlatform = isOnPlatform
         this.number = number;
         this.jump = false;
         this.visited = false;
         this.currentPlatform = false;
-
-        console.log(this.getStartPositionX(), this.getStartPositionY(),width,height)
+        
+       // console.log(this.getStartPositionX(), this.getStartPositionY(),width,height)
     }
 
     render()
     {
-        ctx.drawImage(this.image, this.x, this.y+6, this.width, this.height);
+        ctx.drawImage(this.image, this.x, this.y-2, this.width, this.height+2);
     }
+
 
     getStartPositionX()
     {
@@ -85,17 +86,24 @@ class Platform extends GameObject
                 gameObjects[SKELETON].setCollision(true);
                
             } else if(gameObjects[SKELETON].getDirection() == STOPPED_LEFT){
-                console.log("PlayerIsInsidePlatform")
+                //console.log("PlayerIsInsidePlatform")
             } else if(gameObjects[SKELETON].getDirection() == STOPPED_RIGHT){
-                console.log("PlayerIsInsidePlatform")
+               // console.log("PlayerIsInsidePlatform")
             }                 
         }
 
         // player is on a platform
-        else if((playerY + HEIGHT_OF_SKELETON_ON_CANVAS - 5 > this.getStartPositionY() + 8 && playerY + HEIGHT_OF_SKELETON_ON_CANVAS - 5 < this.getEndPositionY() + 3 ) && 
+        else if((playerY + HEIGHT_OF_SKELETON_ON_CANVAS - 5 > this.getStartPositionY() + 7 && playerY + HEIGHT_OF_SKELETON_ON_CANVAS - 5 < this.getEndPositionY() + 3 ) && 
             (playerX + WIDTH_OF_SKELETON_ON_CANVAS/2 > this.getStartPositionX() + 40 && playerX - WIDTH_OF_SKELETON_ON_CANVAS/2  < this.getEndPositionX()) )
         {
-            if(this.number==4){
+
+            if(!this.visited){
+                height = this.number*100 - 500;
+            }
+
+            this.visited = true;
+
+            if(this.number>=PLATFORM_START){
                 MOVE_SCREEN = true;
             }
             this.currentPlatform = true;
@@ -130,6 +138,7 @@ class Platform extends GameObject
                 }
      
             }
+         
         }
         
         else {
@@ -142,8 +151,16 @@ class Platform extends GameObject
 
     updateState() 
     {
+
+          //check if is new record
+          if(height>best_height)
+          {
+            NEW_RECORD = true;
+          }
+
         if(MOVE_SCREEN){
-            this.y += 0.2
+            this.y += HEIGHT_MULTIPLIER;
+            HEIGHT_MULTIPLIER += 0.0001
         }
     }
 
@@ -165,5 +182,10 @@ class Platform extends GameObject
     getCentreY()
     {
         return this.y + this.height/2;
+    }
+
+    moveScene(value)
+    {
+        this.y += value;
     }
 }

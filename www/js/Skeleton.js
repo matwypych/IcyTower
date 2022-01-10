@@ -5,9 +5,9 @@ class Skeleton extends GameObject
     /* Each gameObject MUST have a constructor() and a render() method.        */
     /* If the object animates, then it must also have an updateState() method. */
 
-    constructor(skeletonImage, centreX, centreY)
+    constructor(skeletonImage, centreX, centreY, updateStateMiliseconds)
     {
-        super(100); /* as this class extends from GameObject, you must always call super() */
+        super(updateStateMiliseconds); /* as this class extends from GameObject, you must always call super() */
 
         /* These variables depend on the object */
         this.centreX = centreX;
@@ -29,21 +29,41 @@ class Skeleton extends GameObject
 
         this.colission = false;
         this.fall = false;
+        this.bounce = false;
+
         this.setDirection(STOPPED_LEFT);
 
-        this.FALLING_SPEED = 7;
-        this.HORIZONTAL_SPEED = 5;
+        this.FALLING_SPEED = 1;
+        this.HORIZONTAL_SPEED = 1;
+        this.BOUNCE_SPEED = 14;
+
+        this.distance = 0;
     }
 
     updateState()
     {
         if(MOVE_SCREEN){
-            this.centreY += 0.9;
+            this.centreY += HEIGHT_MULTIPLIER;
+            HEIGHT_MULTIPLIER += 0.001
+        }
+
+        if(this.direction === RIGHT)
+        {
+            if(this.centreX + 30 > canvas.width){
+                this.direction = LEFT;
+            }
+        }
+
+        if(this.direction === LEFT)
+        {
+            if(this.centreX - 30 < 0){
+                this.direction = RIGHT;
+            }
         }
   
     let gravity = 1;
     let HORIZONTAL_SPEED = 10;
- 
+
         if(!this.colission){
             if (this.direction === UP_RIGHT)
             {
@@ -161,8 +181,29 @@ class Skeleton extends GameObject
                 gravity = 0;
                 this.centreX += this.SKELETON_SPEED;
             }
-        } else {
-         
+        }
+     
+        if(this.bounce){
+       
+            console.log(this.BOUNCE_SPEED)
+
+            if (this.direction === UP_RIGHT){
+                this.centreY -= this.BOUNCE_SPEED;
+                this.BOUNCE_SPEED -= 1;
+                if(this.BOUNCE_SPEED < 0 ){
+                    this.bounce = false;
+                    this.BOUNCE_SPEED = this.BOUNCE_SPEED_DEFUALT
+                }
+            }
+            else if (this.direction === UP_LEFT)
+            {  
+                this.centreY -= this.BOUNCE_SPEED;
+                this.BOUNCE_SPEED -= 1;
+                if(this.BOUNCE_SPEED < 0 ){
+                    this.bounce = false;
+                    this.BOUNCE_SPEED = this.BOUNCE_SPEED_DEFUALT
+                }
+            }
         }
     
     }
@@ -208,6 +249,10 @@ class Skeleton extends GameObject
         return this.centreY;
     }
 
+    getDistance()
+    {
+
+    }
     setY(value)
     {
         this.centreY += value;
@@ -226,7 +271,19 @@ class Skeleton extends GameObject
     {
         // this.colission = value;
     }
-    fallOff(value){
+
+    bounceJump(value)
+    {
+        this.bounce = value;
+        if(this.direction === UP_RIGHT){
+            this.direction = UP_LEFT
+        }
+        else if(this.direction === UP_LEFT){
+            this.direction = UP_RIGHT
+        }
+    }
+    fallOff(value)
+    {
         this.fall = value;
 
         if(this.direction === RIGHT){
@@ -236,5 +293,12 @@ class Skeleton extends GameObject
             this.direction = UP_LEFT
         }
     }
+
+    moveScene()
+    {
+        this.centreY += 50;
+    }
+
+    
    
 }
