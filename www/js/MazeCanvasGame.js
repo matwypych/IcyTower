@@ -25,6 +25,26 @@ class MazeSkeletonCanvasGame extends CanvasGame
     collisionDetection()
     {
       
+        if(!platform_down && !character_down && !background_down)
+        {
+            MOVE_SCREEN_DOWN = false;
+        }
+
+
+        if(MOVE_SCREEN_DOWN){
+
+            gameObjects[SKELETON].moveScreen()
+
+            for(var i = PLATFORM_START; i <= PLATFORM_END; i++){
+                gameObjects[i].moveScreen()
+            }
+
+              // init background images
+              for(j = BACKGROUND_START; j < BACKGROUND_END; j++) {
+                gameObjects[j].moveScreen()
+              }
+        }
+
         // set try again screen
         if(TRY_AGAIN)
         {
@@ -84,7 +104,6 @@ class MazeSkeletonCanvasGame extends CanvasGame
         // player has lost
         if(gameObjects[SKELETON].getCentreY()>canvas.height+10){
 
-            
             gameObjects[LOST_TEXT].start();
             gameObjects[LOST_TEXT_SCORE].setHeight(height);
             gameObjects[LOST_TEXT_SCORE].start();
@@ -113,6 +132,7 @@ class MazeSkeletonCanvasGame extends CanvasGame
                 }
             }
           
+            //window.location.reload()
             TRY_AGAIN = true;
         
         }

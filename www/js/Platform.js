@@ -26,13 +26,14 @@ class Platform extends GameObject
         this.jump = false;
         this.visited = false;
         this.currentPlatform = false;
-        
+        this.moveScene = false;
+        this.moveScreenValue = 0;
        // console.log(this.getStartPositionX(), this.getStartPositionY(),width,height)
     }
 
     render()
     {
-        ctx.drawImage(this.image, this.x, this.y-2, this.width, this.height+2);
+        ctx.drawImage(this.image, this.x, this.y+5, this.width, this.height+2);
     }
 
 
@@ -93,12 +94,12 @@ class Platform extends GameObject
         }
 
         // player is on a platform
-        else if((playerY + HEIGHT_OF_SKELETON_ON_CANVAS - 5 > this.getStartPositionY() + 7 && playerY + HEIGHT_OF_SKELETON_ON_CANVAS - 5 < this.getEndPositionY() + 3 ) && 
+        else if((playerY + HEIGHT_OF_SKELETON_ON_CANVAS - 7 > this.getStartPositionY() + 7 && playerY + HEIGHT_OF_SKELETON_ON_CANVAS - 5 < this.getEndPositionY() + 3 ) && 
             (playerX + WIDTH_OF_SKELETON_ON_CANVAS/2 > this.getStartPositionX() + 40 && playerX - WIDTH_OF_SKELETON_ON_CANVAS/2  < this.getEndPositionX()) )
         {
 
             if(!this.visited){
-                height = this.number*100 - 500;
+                height = this.number*100 - 1200;
             }
 
             this.visited = true;
@@ -149,9 +150,27 @@ class Platform extends GameObject
     }
 
 
+    moveScreen()
+    {
+        platform_down = true
+      
+    }
+
     updateState() 
     {
-
+        if(platform_down)
+        {
+            if(this.moveScreenValue < MOVE_SCREEN_VALUE)
+            {
+                console.log("move down everything");
+                this.y += 10;
+                this.moveScreenValue += 1;
+            } else {
+                this.moveScene = false;
+                this.moveScreenValue = 0;
+                platform_down = false;
+            }
+        }
           //check if is new record
           if(height>best_height)
           {

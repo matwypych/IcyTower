@@ -5,7 +5,7 @@ class Background extends GameObject
     /* Each gameObject MUST have a constructor() and a render() method.        */
     /* If the object animates, then it must also have an updateState() method. */
 
-    constructor(image, x, y, width, height, updateStateMilliseconds)
+    constructor(image, x, y, width, height, updateStateMilliseconds, number)
     {
         super(updateStateMilliseconds); /* as this class extends from GameObject, you must always call super() */
 
@@ -15,22 +15,18 @@ class Background extends GameObject
         this.height = height;
         this.x = x;
         this.y = y;
-
-
+        this.number = number;
         this.offscreenCanvas = document.createElement('canvas');
         this.offscreenCanvasCtx = this.offscreenCanvas.getContext('2d');
         this.offscreenCanvas.width = canvas.width;
         this.offscreenCanvas.height = canvas.height;
-      
-
         this.offscreenCanvasCtx.drawImage(this.image, this.x, this.y, canvas.width, canvas.height);
         this.offscreenCanvasCtx.drawImage(this.image, this.x, this.y - canvas.height, canvas.width, canvas.height);
-
-     
-
         this.color_multiplier = 5;
-       
-
+        this.loop_counter = 0;
+        this.moveScene = false;
+        this.moveScreenValue = 0;
+      
     }
 
     changePicColor()
@@ -54,16 +50,66 @@ class Background extends GameObject
      
     }
 
+
+    moveScreen()
+    {
+        background_down = true
+    }
+
     updateState()
     {   
-       
-        this.y += 10
+
+        if(background_down)
+        {
+            if(this.moveScreenValue<MOVE_SCREEN_VALUE)
+            {
+                console.log("move down everything");
+                this.y += 10;
+                this.moveScreenValue+=1;
+            } else {
+                this.moveScene = false;
+                this.moveScreenValue = 0;
+                background_down = false;
+            }
+        }
+
+        if(current_background==this.number){
+            // this.y += 100
+            if(MOVE_SCREEN){
+                this.y += HEIGHT_MULTIPLIER;
+                HEIGHT_MULTIPLIER += 0.0001
+            }
        
         if (this.y >= canvas.height)
         {
-            this.changePicColor()
-            this.render()
-            this.y = 0;
+            if(this.loop_counter>=this.number)
+            {
+                console.log("Stop: ", this.number)
+                if(current_background!==BACKGROUND_END)
+                {
+                    this.stopAndHide()
+                    current_background+=1;
+                } else {
+                   
+                }
+              
+               
+              
+            }
+            console.log("Img nr:" , this.number)
+            console.log("cntr: ", this.loop_counter)
+                this.loop_counter += 1;
+                this.y = 0;
+            
+        } 
+
+        if(current_background==BACKGROUND_END){
+            this.y += 100
+            if (this.y >= canvas.height)
+            {
+                this.y = 0;
+            }
+        }
         }
     }
 

@@ -25,8 +25,8 @@ function onAllAssetsLoaded()
 	// canvas.width = Math.min(window.innerWidth);
     // canvas.height = Math.min(window.innerHeight);
     
-	canvas.width = 500 // window.innerWidth
-    canvas.height = 500 // window.innerHeight
+	canvas.width = window.innerWidth
+    canvas.height =  window.innerHeight
 
     console.log("Inner width: " + window.innerWidth)
     console.log("client Width: " + canvas.clientWidth)

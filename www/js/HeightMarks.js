@@ -4,7 +4,7 @@ class HeightMarks extends GameObject
     /* Each gameObject MUST have a constructor() and a render() method.        */
     /* If the object animates, then it must also have an updateState() method. */
 
-    constructor(text, x, y, font, fontSize, colour, centered, best, updateStateMiliseconds)
+    constructor(image, text, x, y, font, fontSize, colour, centered, best, updateStateMiliseconds)
     {
         super(updateStateMiliseconds); /* as this class extends from GameObject, you must always call super() */
 
@@ -19,6 +19,7 @@ class HeightMarks extends GameObject
         ctx.font = this.fontSize + "px " + this.font;
         this.width = ctx.measureText(this.text).width;
         this.distance = 505;
+        this.image = image;
 
         if(centered)
         {
@@ -43,6 +44,7 @@ class HeightMarks extends GameObject
 
     render()
     {
+        ctx.drawImage(this.image, this.x-5, this.y-33, 120, 60);
         ctx.fillStyle = this.colour;
         ctx.font = this.fontSize + "px " + this.font; // need to set the font each time, as it might have been changed by other gameObjects.
         ctx.fillText(this.text, this.x, this.y);

@@ -36,12 +36,50 @@ class Skeleton extends GameObject
         this.FALLING_SPEED = 1;
         this.HORIZONTAL_SPEED = 1;
         this.BOUNCE_SPEED = 14;
-
         this.distance = 0;
+
+        this.moveScene = false;
+        this.moveScreenValue = 0;
+    }
+
+
+    moveScreen()
+    {
+        this.moveScene = true
     }
 
     updateState()
     {
+        if(character_down)
+        {
+            if(this.moveScreenValue<MOVE_SCREEN_VALUE)
+            {
+                console.log("move down everything");
+                this.centreY += 10;
+                this.moveScreenValue +=1;
+            } else {
+                character_down = false;
+                this.moveScreenValue = 0;
+                character_down = false;
+            }
+           
+           
+        }
+
+        if(this.centreY-50<0)
+        {
+            platform_down = true;
+            character_down = true;
+            background_down = true;
+            MOVE_SCREEN_DOWN = true;
+        } else {
+            this.moveScene = false;
+            platform_down = false;
+            character_down = false;
+            background_down = false;
+            MOVE_SCREEN_DOWN = false;
+        }
+
         if(MOVE_SCREEN){
             this.centreY += HEIGHT_MULTIPLIER;
             HEIGHT_MULTIPLIER += 0.001
