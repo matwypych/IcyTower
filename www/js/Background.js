@@ -77,7 +77,7 @@ class Background extends GameObject
             // this.y += 100
             if(MOVE_SCREEN){
                 this.y += HEIGHT_MULTIPLIER;
-                HEIGHT_MULTIPLIER += 0.0001
+                HEIGHT_MULTIPLIER += 0.00001
             }
        
         if (this.y >= canvas.height)

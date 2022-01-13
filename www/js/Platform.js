@@ -29,11 +29,23 @@ class Platform extends GameObject
         this.moveScene = false;
         this.moveScreenValue = 0;
        // console.log(this.getStartPositionX(), this.getStartPositionY(),width,height)
+        this.degrees = 0;
+        this.movement_direction = getRandomInt(-1,2);
+        while(this.movement_direction==0){
+            this.movement_direction = getRandomInt(-1,2);
+        }
+        this.speed = getRandomInt(0,5);
+        console.log(this.movement_direction)
     }
 
     render()
     {
-        ctx.drawImage(this.image, this.x, this.y+5, this.width, this.height+2);
+        // ctx.save(); // remember the state of the canvas prior to the rotation
+        // ctx.translate(this.x, this.y);
+        // ctx.rotate(Math.radians(this.degrees));
+        // ctx.translate(-this.x, -this.y);
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height+4);
+        //ctx.restore();
     }
 
 
@@ -59,44 +71,50 @@ class Platform extends GameObject
 
     fallOffPlatform(){
         if(this.currentPlatform){
-            gameObjects[SKELETON].fallOff(true)
+            gameObjects[CHARACTER].fallOff(true)
             this.currentPlatform = false; 
         }
     }
 
+    getSpeed()
+    {
+        return this.speed
+    }
+
     playerIsInsidePlatform(playerX, playerY)
     {
-        let WIDTH_OF_SKELETON_ON_CANVAS = 50;
-        let HEIGHT_OF_SKELETON_ON_CANVAS = 90;
+        let WIDTH_OF_CHARACTER_ON_CANVAS = 50;
+        let HEIGHT_OF_CHARACTER_ON_CANVAS = 90;
         ctx.strokeRect(this.getStartPositionX(), this.getStartPositionY(),this.width,this.height);
         // console.log("playerX: " + playerX + ", playerY: " + playerY)
         // console.log("platformStartX: " + this.getStartPositionX() + ", platformEndX: " + this. getEndPositionX())
         // console.log("platformStartY: " + this.getStartPositionY() + ", platformEndY: " + this. getEndPositionY())
 
-        playerY = playerY - HEIGHT_OF_SKELETON_ON_CANVAS
+        playerY = playerY - HEIGHT_OF_CHARACTER_ON_CANVAS
         
 
         // player collided with a platform
         if((playerY > this.getStartPositionY() &&  playerY < this.getEndPositionY()) && 
-            (playerX - WIDTH_OF_SKELETON_ON_CANVAS/2  < this.getEndPositionX() && playerX + WIDTH_OF_SKELETON_ON_CANVAS/2 > this.getStartPositionX()) )
+            (playerX - WIDTH_OF_CHARACTER_ON_CANVAS/2  < this.getEndPositionX() && playerX + WIDTH_OF_CHARACTER_ON_CANVAS/2 > this.getStartPositionX()) )
         {
-            if(gameObjects[SKELETON].getDirection() == UP_LEFT){
-                gameObjects[SKELETON].setCollision(true);
+            if(gameObjects[CHARACTER].getDirection() == UP_LEFT){
+                gameObjects[CHARACTER].setCollision(true);
             }
-            else if(gameObjects[SKELETON].getDirection() == UP_RIGHT){
-                gameObjects[SKELETON].setCollision(true);
+            else if(gameObjects[CHARACTER].getDirection() == UP_RIGHT){
+                gameObjects[CHARACTER].setCollision(true);
                
-            } else if(gameObjects[SKELETON].getDirection() == STOPPED_LEFT){
+            } else if(gameObjects[CHARACTER].getDirection() == STOPPED_LEFT){
                 //console.log("PlayerIsInsidePlatform")
-            } else if(gameObjects[SKELETON].getDirection() == STOPPED_RIGHT){
+            } else if(gameObjects[CHARACTER].getDirection() == STOPPED_RIGHT){
                // console.log("PlayerIsInsidePlatform")
             }                 
         }
 
         // player is on a platform
-        else if((playerY + HEIGHT_OF_SKELETON_ON_CANVAS - 7 > this.getStartPositionY() + 7 && playerY + HEIGHT_OF_SKELETON_ON_CANVAS - 5 < this.getEndPositionY() + 3 ) && 
-            (playerX + WIDTH_OF_SKELETON_ON_CANVAS/2 > this.getStartPositionX() + 40 && playerX - WIDTH_OF_SKELETON_ON_CANVAS/2  < this.getEndPositionX()) )
+        else if((playerY + HEIGHT_OF_CHARACTER_ON_CANVAS - 5 > this.getStartPositionY() + 8 && playerY + HEIGHT_OF_CHARACTER_ON_CANVAS - 5 < this.getEndPositionY() + 3 ) && 
+            (playerX + WIDTH_OF_CHARACTER_ON_CANVAS/2 > this.getStartPositionX() + 40 && playerX - WIDTH_OF_CHARACTER_ON_CANVAS/2  < this.getEndPositionX()) )
         {
+
 
             if(!this.visited){
                 height = this.number*100 - 1200;
@@ -108,33 +126,35 @@ class Platform extends GameObject
                 MOVE_SCREEN = true;
             }
             this.currentPlatform = true;
-            if(gameObjects[SKELETON].getDirection() == UP_LEFT){
+            if(gameObjects[CHARACTER].getDirection() == UP_LEFT){
                 if(this.getPlayerIsOnPlatform()){
-                    gameObjects[SKELETON].setY(-15)
+                    gameObjects[CHARACTER].setY(-15)
                     this.currentPlatform = false;
                     this.setPlayerIsOnPlatform(false)
-                } else {
+                } else  {
                   //  console.log("Stayed on platform 1", this.getPlayerIsOnPlatform())
-                    // gameObjects[SKELETON].setCollision();
-                    gameObjects[SKELETON].setDirection(STOPPED_LEFT);
-                    gameObjects[SKELETON].resetSpeed();
+                    // gameObjects[CHARACTER].setCollision();
+                    gameObjects[CHARACTER].setDirection(STOPPED_LEFT);
+                    gameObjects[CHARACTER].resetSpeed();
                     this.setPlayerIsOnPlatform(true)
-                   // console.log("Changing to:", this.getPlayerIsOnPlatform())
+                    gameObjects[CHARACTER].setMovement(this.movement_direction, this.speed)
+                  
                 }           
             }
-            else if(gameObjects[SKELETON].getDirection() == UP_RIGHT){
+            else if(gameObjects[CHARACTER].getDirection() == UP_RIGHT){
               
                 if(this.getPlayerIsOnPlatform()) {
                    // console.log("Was Stayed on platform", this.getPlayerIsOnPlatform())
-                    gameObjects[SKELETON].setY(-15)
+                    gameObjects[CHARACTER].setY(-15)
                     this.currentPlatform = false;
                     this.setPlayerIsOnPlatform(false)
                 } else {
                    // console.log("Stayed on platform 1", this.getPlayerIsOnPlatform())
-                    // gameObjects[SKELETON].setCollision();
-                    gameObjects[SKELETON].setDirection(STOPPED_RIGHT);
-                    gameObjects[SKELETON].resetSpeed();
+                    // gameObjects[CHARACTER].setCollision();
+                    gameObjects[CHARACTER].setDirection(STOPPED_RIGHT);
+                    gameObjects[CHARACTER].resetSpeed();
                     this.setPlayerIsOnPlatform(true)
+                    gameObjects[CHARACTER].setMovement(this.movement_direction, this.speed)
                    // console.log("Changing platform:", this.number, " to:", this.getPlayerIsOnPlatform())
                 }
      
@@ -158,6 +178,16 @@ class Platform extends GameObject
 
     updateState() 
     {
+    
+        if(this.x<10 || this.x > canvas.width - 140)
+        {
+            this.movement_direction *= -1 
+        }   
+        this.x += this.movement_direction *this.speed;
+    
+        
+        this.degrees += 10;
+
         if(platform_down)
         {
             if(this.moveScreenValue < MOVE_SCREEN_VALUE)
@@ -179,7 +209,7 @@ class Platform extends GameObject
 
         if(MOVE_SCREEN){
             this.y += HEIGHT_MULTIPLIER;
-            HEIGHT_MULTIPLIER += 0.0001
+            HEIGHT_MULTIPLIER += 0.00001
         }
     }
 

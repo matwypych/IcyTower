@@ -1,15 +1,27 @@
 /* Author: Derek O Reilly, Dundalk Institute of Technology, Ireland. */
 /* style class for game's container, canvas and loading message      */
 
+body{
+    box-sizing: border-box;
+    margin: 0px;
+}
+
+@font-face {
+    font-family: "Nerko One";
+    src: url("../font/NerkoOne-Regular.ttf"); 
+  }
+
 #gameContainer
 {
+    margin:0px;
     /* style the gameContainer if the game includes non-canvas elements */
 }
 
 #gameCanvas
 {
+    margin:0;
     /* the canvas styling usually does not change */
-    outline:1px solid darkgrey;
+    outline:0px solid darkgrey;
  
 }
 

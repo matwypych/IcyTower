@@ -44,14 +44,29 @@ background_blue.src = "images/background_blue.png";
 let mazeGrid = new Image();
 mazeGrid.src = "images/maze_grid1.png";
 
-let platform = new Image();
-platform.src = "images/platform.png";
+let platform0 = new Image();
+platform0.src = "images/platform.png";
+
+let platform1 = new Image();
+platform1.src = "images/platform_blue.png";
+
+let platform2 = new Image();
+platform2.src = "images/platform_pink.png";
+
+let platform3 = new Image();
+platform3.src = "images/platform_red.png";
+
+let platform4 = new Image();
+platform4.src = "images/platform_green.png";
+
+let platform5 = new Image();
+platform5.src = "images/platform_yellow.png";
 
 let borders = new Image();
 borders.src = "images/borders.png";
 
 let menu = new Image();
-menu.src = "images/menu_no_text.png";
+menu.src = "images/menu_no_text_2.png";
 
 let button = new Image();
 button.src = "images/button.png";
@@ -87,7 +102,7 @@ const BACKGROUND_START = 0;
 const BACKGROUND_END = 7;
 const BORDERS = 8;
 const BUTTONS = 9;
-const SKELETON = 10;
+const CHARACTER = 10;
 const DISTANCE_MESSAGE = 11;
 const BEST_SCORE = 12
 const PLATFORM_START = 13;
@@ -97,10 +112,12 @@ const MENU = 102;
 const PLAY_GAME_TEXT = 103;
 const PLAY_GAME_TEXT_INFO = 104;
 const SCORE_TEXT = 105;
-const LOST_TEXT = 106;
-const LOST_TEXT_SCORE = 107;
-const TRY_AGAIN_TEXT = 108; 
-const CONFETTI_GIF = 109; 
+const SECOND_TRY = 106;
+const LOST_TEXT = 107;
+const LOST_TEXT_SCORE = 108;
+const TRY_AGAIN_TEXT = 109; 
+const CONFETTI_GIF = 110; 
+
 const MOVE_SCREEN_VALUE = 20;
 
 
@@ -114,7 +131,7 @@ var TRY_AGAIN = false;
 let game = null;
 var height = 0;
 var best_height = 0;
-var user_name = "";
+
 var user_document = null;
 var max_platform = 0;
 
@@ -122,6 +139,8 @@ var MOVE_SCREEN_DOWN = false;
 var platform_down = false;
 var character_down = false;
 var background_down = false;
+var fell_down = false;
+var player_lifes = 1;
 
 function playGame()
 {
@@ -171,17 +190,8 @@ function playGame()
         console.log(querySnapshot.empty)
      
         if(querySnapshot.empty)
-        {
-
-            while(user_name==""){
-                user_name = prompt("What is your name?");
-                if(user_name==null){
-                    user_name=""
-                }
-               }
-               
+        { 
                db.collection("users").add({
-                        name: user_name,
                         best_score: "0",
                         uid: visitorId
                     })
@@ -249,16 +259,44 @@ function playGame()
         var heightPlacement = canvas.height;
 
         for(var i = PLATFORM_START; i <= PLATFORM_END; i++){
-            let widthPlacement = getRandomInt(0,canvas.width-160);
+            let widthPlacement = getRandomInt(20,canvas.width-160);
+            let platform_color = getRandomInt(0,5);
+            let platform = null;
+            if(platform_color == 0)
+            {
+                platform = platform0;
+            }
+            if(platform_color == 1)
+            {
+                platform = platform1;
+            }
+            if(platform_color == 2)
+            {
+                platform = platform2;
+            }
+            if(platform_color == 3)
+            {
+                platform = platform3;
+            }
+            if(platform_color == 4)
+            {
+                platform = platform4;
+            }
+            if(platform_color == 5)
+            {
+                platform = platform5;
+            }
+
             gameObjects[i] = new Platform(platform,i, widthPlacement , heightPlacement - 100, 140-WIDTH_MULTIPLIER, 20, UPDATE_TIME, false);
             WIDTH_MULTIPLIER += 1
             heightPlacement -= 93;
         }
         
-        gameObjects[SKELETON] = new MazeSkeleton(skeletonImage, canvas.width/2, canvas.height + 5, UPDATE_TIME);
-        gameObjects[LOST_TEXT_SCORE] = new InfoText("Your score: ", 100, 350, "Nerko One", 50, "blue", true);
-        gameObjects[LOST_TEXT] = new InfoText("You Lost !", 100, 300, "Nerko One", 50, "red", true);
-        gameObjects[TRY_AGAIN_TEXT] = new ButtonText("Click to try again", 20, 400, "Nerko One", 50, "red");
+        gameObjects[CHARACTER] = new JumpCharacter(skeletonImage, canvas.width/2, canvas.height + 5, UPDATE_TIME);
+    
+        gameObjects[LOST_TEXT_SCORE] = new InfoText("Your score: ", 80, 150, "Nerko One", 40, "blue", true);
+        gameObjects[LOST_TEXT] = new InfoText("You Lost !", 100, canvas.height - 200, "Nerko One", 50, "red", true);
+       // gameObjects[TRY_AGAIN_TEXT] = new ButtonText("Click to try again", 20, 400, "Nerko One", 50, "red");
        
      
        
@@ -270,77 +308,76 @@ function playGame()
 
 
     /* Always create a game that uses the gameObject array */
-    game = new MazeSkeletonCanvasGame(borders);
+    game = new TowerCanvasGame(borders);
 
     /* Always play the game */
     game.start();
-
 
     document.addEventListener('keydown', function (e)
     {
         if (e.keyCode === 37)  // left
         {
-            if (gameObjects[SKELETON].getDirection() === UP_LEFT){
-                gameObjects[SKELETON].setDirection(UP_LEFT);
+            if (gameObjects[CHARACTER].getDirection() === UP_LEFT){
+                gameObjects[CHARACTER].setDirection(UP_LEFT);
             }
-            else if (gameObjects[SKELETON].getDirection() === UP_RIGHT){
-                gameObjects[SKELETON].setDirection(UP_LEFT);
+            else if (gameObjects[CHARACTER].getDirection() === UP_RIGHT){
+                gameObjects[CHARACTER].setDirection(UP_LEFT);
             }
-            else if (gameObjects[SKELETON].getDirection() === STOPPED_LEFT){
-                gameObjects[SKELETON].setDirection(LEFT);
+            else if (gameObjects[CHARACTER].getDirection() === STOPPED_LEFT){
+                gameObjects[CHARACTER].setDirection(LEFT);
             }
-            else if (gameObjects[SKELETON].getDirection() === STOPPED_RIGHT){
-                gameObjects[SKELETON].setDirection(LEFT);
+            else if (gameObjects[CHARACTER].getDirection() === STOPPED_RIGHT){
+                gameObjects[CHARACTER].setDirection(LEFT);
             }
-            else if (gameObjects[SKELETON].getDirection() === RIGHT){
-                gameObjects[SKELETON].setDirection(LEFT);
+            else if (gameObjects[CHARACTER].getDirection() === RIGHT){
+                gameObjects[CHARACTER].setDirection(LEFT);
             }
-            else if (gameObjects[SKELETON].getDirection() === LEFT){
-                //gameObjects[SKELETON].setDirection(LEFT);
+            else if (gameObjects[CHARACTER].getDirection() === LEFT){
+                //gameObjects[CHARACTER].setDirection(LEFT);
             }
 
         }
         else if (e.keyCode === 38) // up
         {
-            if(gameObjects[SKELETON].getDirection() === LEFT){
-                gameObjects[SKELETON].setDirection(UP_LEFT);
+            if(gameObjects[CHARACTER].getDirection() === LEFT){
+                gameObjects[CHARACTER].setDirection(UP_LEFT);
             } 
-            else if(gameObjects[SKELETON].getDirection() === RIGHT){
-                gameObjects[SKELETON].setDirection(UP_RIGHT);
+            else if(gameObjects[CHARACTER].getDirection() === RIGHT){
+                gameObjects[CHARACTER].setDirection(UP_RIGHT);
             }
-            else if(gameObjects[SKELETON].getDirection() === STOPPED_LEFT){
-                gameObjects[SKELETON].setDirection(UP_LEFT);
+            else if(gameObjects[CHARACTER].getDirection() === STOPPED_LEFT){
+                gameObjects[CHARACTER].setDirection(UP_LEFT);
             }
-            else if(gameObjects[SKELETON].getDirection() === STOPPED_RIGHT){
-                gameObjects[SKELETON].setDirection(UP_RIGHT);
+            else if(gameObjects[CHARACTER].getDirection() === STOPPED_RIGHT){
+                gameObjects[CHARACTER].setDirection(UP_RIGHT);
             }
             
         }
         else if (e.keyCode === 39) // right
         {
-            if (gameObjects[SKELETON].getDirection() === UP_RIGHT){
-                //gameObjects[SKELETON].setDirection(UP_RIGHT);
+            if (gameObjects[CHARACTER].getDirection() === UP_RIGHT){
+                //gameObjects[CHARACTER].setDirection(UP_RIGHT);
             }
-            else if (gameObjects[SKELETON].getDirection() === UP_LEFT){
-                gameObjects[SKELETON].setDirection(UP_RIGHT);
+            else if (gameObjects[CHARACTER].getDirection() === UP_LEFT){
+                gameObjects[CHARACTER].setDirection(UP_RIGHT);
             }
-            else if (gameObjects[SKELETON].getDirection() === STOPPED_LEFT){
-                gameObjects[SKELETON].setDirection(RIGHT);
+            else if (gameObjects[CHARACTER].getDirection() === STOPPED_LEFT){
+                gameObjects[CHARACTER].setDirection(RIGHT);
             }
-            else if (gameObjects[SKELETON].getDirection() === STOPPED_RIGHT){
-                gameObjects[SKELETON].setDirection(RIGHT);
+            else if (gameObjects[CHARACTER].getDirection() === STOPPED_RIGHT){
+                gameObjects[CHARACTER].setDirection(RIGHT);
             }
-            else if (gameObjects[SKELETON].getDirection() === RIGHT){
-                //gameObjects[SKELETON].setDirection(RIGHT);
+            else if (gameObjects[CHARACTER].getDirection() === RIGHT){
+                //gameObjects[CHARACTER].setDirection(RIGHT);
             }
-            else if (gameObjects[SKELETON].getDirection() === LEFT){
-                gameObjects[SKELETON].setDirection(RIGHT);
+            else if (gameObjects[CHARACTER].getDirection() === LEFT){
+                gameObjects[CHARACTER].setDirection(RIGHT);
             }
 
         }
         // else if (e.keyCode === 40) // down
         // {
-        //     gameObjects[SKELETON].setDirection(DOWN);
+        //     gameObjects[CHARACTER].setDirection(DOWN);
         // }
     });
 
@@ -353,51 +390,107 @@ function handleOrientation(event)
     //turn right
     if(event.gamma<0)
     {
-        if (gameObjects[SKELETON].getDirection() === UP_RIGHT){
-            //gameObjects[SKELETON].setDirection(UP_RIGHT);
+        if (gameObjects[CHARACTER].getDirection() === UP_RIGHT){
+            //gameObjects[CHARACTER].setDirection(UP_RIGHT);
         }
-        else if (gameObjects[SKELETON].getDirection() === UP_LEFT){
-            gameObjects[SKELETON].setDirection(UP_RIGHT);
+        else if (gameObjects[CHARACTER].getDirection() === UP_LEFT){
+            gameObjects[CHARACTER].setDirection(UP_RIGHT);
         }
-        else if (gameObjects[SKELETON].getDirection() === STOPPED_LEFT){
-            gameObjects[SKELETON].setDirection(RIGHT);
+        else if (gameObjects[CHARACTER].getDirection() === STOPPED_LEFT){
+            gameObjects[CHARACTER].setDirection(RIGHT);
         }
-        else if (gameObjects[SKELETON].getDirection() === STOPPED_RIGHT){
-            gameObjects[SKELETON].setDirection(RIGHT);
+        else if (gameObjects[CHARACTER].getDirection() === STOPPED_RIGHT){
+            gameObjects[CHARACTER].setDirection(RIGHT);
         }
-        else if (gameObjects[SKELETON].getDirection() === RIGHT){
-            //gameObjects[SKELETON].setDirection(RIGHT);
+        else if (gameObjects[CHARACTER].getDirection() === RIGHT){
+            //gameObjects[CHARACTER].setDirection(RIGHT);
         }
-        else if (gameObjects[SKELETON].getDirection() === LEFT){
-            gameObjects[SKELETON].setDirection(RIGHT);
+        else if (gameObjects[CHARACTER].getDirection() === LEFT){
+            gameObjects[CHARACTER].setDirection(RIGHT);
         }
 
     }
     //turn left 
     else if(event.gamma>0)
     {
-        if (gameObjects[SKELETON].getDirection() === UP_LEFT){
-            //gameObjects[SKELETON].setDirection(UP_LEFT);
+        if (gameObjects[CHARACTER].getDirection() === UP_LEFT){
+            //gameObjects[CHARACTER].setDirection(UP_LEFT);
         }
-        else if (gameObjects[SKELETON].getDirection() === UP_RIGHT){
-            gameObjects[SKELETON].setDirection(UP_LEFT);
+        else if (gameObjects[CHARACTER].getDirection() === UP_RIGHT){
+            gameObjects[CHARACTER].setDirection(UP_LEFT);
         }
-        else if (gameObjects[SKELETON].getDirection() === STOPPED_LEFT){
-            gameObjects[SKELETON].setDirection(LEFT);
+        else if (gameObjects[CHARACTER].getDirection() === STOPPED_LEFT){
+            gameObjects[CHARACTER].setDirection(LEFT);
         }
-        else if (gameObjects[SKELETON].getDirection() === STOPPED_RIGHT){
-            gameObjects[SKELETON].setDirection(LEFT);
+        else if (gameObjects[CHARACTER].getDirection() === STOPPED_RIGHT){
+            gameObjects[CHARACTER].setDirection(LEFT);
         }
-        else if (gameObjects[SKELETON].getDirection() === RIGHT){
-            gameObjects[SKELETON].setDirection(LEFT);
+        else if (gameObjects[CHARACTER].getDirection() === RIGHT){
+            gameObjects[CHARACTER].setDirection(LEFT);
         }
-        else if (gameObjects[SKELETON].getDirection() === LEFT){
-           // gameObjects[SKELETON].setDirection(LEFT);
+        else if (gameObjects[CHARACTER].getDirection() === LEFT){
+           // gameObjects[CHARACTER].setDirection(LEFT);
         }
 
     }
    
  
+}
+
+function clearGame() 
+{
+   
+
+    // for (let i = 0; i < gameObjects.length-3; i++) /* stop all gameObjects from animating */
+    // {
+      
+    //     gameObjects[i] = null;
+      
+    // }
+    //gameObjects = [];
+    background_images = [];
+    
+    HEIGHT_MULTIPLIER = 1;
+    WIDTH_MULTIPLIER = 0.1;
+
+    current_background = 0;
+    NEW_RECORD = false;
+    MOVE_SCREEN = false;
+    END_GAME = false;
+    counterClick = -1;
+    HOME_SCREEN = true;
+    TRY_AGAIN = false;
+    game = null;
+  
+    user_document = null;
+    max_platform = 0;
+
+    MOVE_SCREEN_DOWN = false;
+    platform_down = false;
+    character_down = false;
+    fell_down = false;
+    player_lifes = 1;
+    playGame()
+    gameObjects[SECOND_TRY].stopAndHide()
+    gameObjects[LOST_TEXT].start();
+    gameObjects[LOST_TEXT_SCORE].setHeight(height);
+    gameObjects[LOST_TEXT_SCORE].start();
+    height = 0;
+    //gameObjects[TRY_AGAIN_TEXT].start()
+    // var heightPlacement = canvas.height;
+
+    // for(var i = PLATFORM_START; i <= PLATFORM_END; i++){
+    //     let widthPlacement = getRandomInt(0,canvas.width-160);
+    //     gameObjects[i] = new Platform(platform,i, widthPlacement , heightPlacement - 100, 140-WIDTH_MULTIPLIER, 20, UPDATE_TIME, false);
+    //     WIDTH_MULTIPLIER += 1
+    //     heightPlacement -= 93;
+    // }
+   
+    // TRY_AGAIN = true;
+    // gameObjects[CHARACTER] = new MazeCharacter(skeletonImage, canvas.width/2, canvas.height + 5, UPDATE_TIME);
+    // gameObjects[CHARACTER].start()
+    // console.log(gameObjects)
+
 }
 
 
